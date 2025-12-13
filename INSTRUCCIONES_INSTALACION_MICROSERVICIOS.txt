@@ -1,0 +1,77 @@
+==============================================================================
+   INSTALACIÓN DEL SISTEMA NICHOLOG (MICROSERVICIOS)
+==============================================================================
+
+REQUISITOS:
+- Node.js instalado.
+- MongoDB corriendo.
+- Estructura de carpetas creada (api-gateway, auth-service, etc.)
+
+IMPORTANTE:
+Debes abrir 5 terminales diferentes (una por cada servicio).
+
+------------------------------------------------------------------------------
+PASO 1: API GATEWAY (Puerto 8080)
+------------------------------------------------------------------------------
+1. Entra a la carpeta: cd api-gateway
+2. Instala dependencias:
+   npm install
+3. Inicia el servicio:
+   npm run dev
+
+------------------------------------------------------------------------------
+PASO 2: AUTH SERVICE (Puerto 5001)
+------------------------------------------------------------------------------
+1. Entra a la carpeta: cd auth-service
+2. Instala dependencias:
+   npm install
+3. Inicia el servicio:
+   npm run dev
+
+------------------------------------------------------------------------------
+PASO 3: CATALOG SERVICE (Puerto 5002)
+------------------------------------------------------------------------------
+1. Entra a la carpeta: cd catalog-service
+2. Instala dependencias:
+   npm install
+3. Inicia el servicio:
+   npm run dev
+
+(Nota: Una vez encendido, corre el Seed en http://localhost:5002/seed)
+
+------------------------------------------------------------------------------
+PASO 4: ANALYTICS SERVICE (Puerto 5003)
+------------------------------------------------------------------------------
+1. Entra a la carpeta: cd analytics-service
+2. Instala dependencias:
+   npm install
+3. Inicia el servicio:
+   npm run dev
+
+------------------------------------------------------------------------------
+PASO 5: UPLOAD SERVICE (Puerto 5004) - ¡ATENCIÓN AQUÍ!
+------------------------------------------------------------------------------
+Este servicio usa una librería antigua de Cloudinary que conflicto con la nueva.
+Debes forzar la instalación.
+
+1. Entra a la carpeta: cd upload-service
+2. Instala dependencias FORZANDO compatibilidad:
+   
+   npm install --force
+
+   (Si no usas --force, te dará error ERESOLVE).
+
+3. Inicia el servicio:
+   npm run dev
+
+------------------------------------------------------------------------------
+VERIFICACIÓN
+------------------------------------------------------------------------------
+Si todo salió bien, deberías tener:
+- Gateway en 8080
+- Auth en 5001
+- Catalog en 5002
+- Analytics en 5003
+- Upload en 5004
+
+Prueba general: http://localhost:8080/api/analytics/dashboard (Con Token)

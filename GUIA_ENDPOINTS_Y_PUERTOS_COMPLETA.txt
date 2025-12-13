@@ -1,0 +1,155 @@
+==============================================================================
+   DOCUMENTACIÓN MAESTRA DE ENDPOINTS - NICHOLOG MICROSERVICIOS
+==============================================================================
+
+ARQUITECTURA DE PUERTOS:
+------------------------------------------------------------------------------
+[8080] API GATEWAY       ->  La puerta pública (Usa esta en Frontend/Móvil).
+[5001] AUTH SERVICE      ->  Gestión de Usuarios.
+[5002] CATALOG SERVICE   ->  Colecciones e Items (El núcleo).
+[5003] ANALYTICS SERVICE ->  Dashboard y Estadísticas.
+[5004] UPLOAD SERVICE    ->  Subida de imágenes.
+
+NOTA: "Auth: Token" significa que debes enviar el header "Authorization: Bearer <token>".
+
+==============================================================================
+1. AUTH SERVICE (Puerto Interno: 5001)
+Prefix Gateway: /api/auth
+==============================================================================
+
+A. REGISTRO DE USUARIO
+   - Función: registerUser
+   - Gateway: POST http://localhost:8080/api/auth/register
+   - Directo: POST http://localhost:5001/register
+   - Auth: No
+   - Body: { "username": "...", "email": "...", "password": "..." }
+
+B. LOGIN (INICIO DE SESIÓN)
+   - Función: loginUser
+   - Gateway: POST http://localhost:8080/api/auth/login
+   - Directo: POST http://localhost:5001/login
+   - Auth: No
+   - Body: { "email": "...", "password": "..." }
+
+C. VER PERFIL
+   - Gateway: GET http://localhost:8080/api/auth/profile
+   - Directo: GET http://localhost:5001/profile
+   - Auth: Token
+
+D. ACTUALIZAR PERFIL
+   - Función: updateProfile
+   - Gateway: PUT http://localhost:8080/api/auth/profile
+   - Directo: PUT http://localhost:5001/profile
+   - Auth: Token
+   - Body: { "username": "Nuevo", "password": "..." }
+
+==============================================================================
+2. CATALOG SERVICE (Puerto Interno: 5002)
+Prefix Gateway: /api/catalog
+Nota: En este servicio configuramos la ruta interna igual que la externa.
+==============================================================================
+
+--- GESTIÓN DE COLECCIONES ---
+
+A. CREAR COLECCIÓN
+   - Función: createCollection
+   - Gateway: POST http://localhost:8080/api/catalog/collections
+   - Directo: POST http://localhost:5002/api/catalog/collections
+   - Auth: Token
+   - Body: { "name": "...", "fields": [...] }
+
+B. OBTENER MIS COLECCIONES
+   - Función: getUserCollections
+   - Gateway: GET http://localhost:8080/api/catalog/collections
+   - Directo: GET http://localhost:5002/api/catalog/collections
+   - Auth: Token
+
+C. ACTUALIZAR COLECCIÓN
+   - Función: updateCollection
+   - Gateway: PUT http://localhost:8080/api/catalog/collections/:id
+   - Directo: PUT http://localhost:5002/api/catalog/collections/:id
+   - Auth: Token
+
+D. ELIMINAR COLECCIÓN (Y SUS ITEMS)
+   - Función: deleteCollection
+   - Gateway: DELETE http://localhost:8080/api/catalog/collections/:id
+   - Directo: DELETE http://localhost:5002/api/catalog/collections/:id
+   - Auth: Token
+
+--- GESTIÓN DE ITEMS (INVENTARIO) ---
+
+E. CREAR ITEM
+   - Función: createItem
+   - Gateway: POST http://localhost:8080/api/catalog/items
+   - Directo: POST http://localhost:5002/api/catalog/items
+   - Auth: Token
+   - Body: { "templateId": "...", "dynamicData": {...}, "acquisition": {...} }
+
+F. VER ITEMS POR NOMBRE DE COLECCIÓN
+   - Función: getItemsByCollectionName
+   - Gateway: GET http://localhost:8080/api/catalog/collections/:name/items
+   - Directo: GET http://localhost:5002/api/catalog/collections/:name/items
+   - Auth: Token
+
+G. BUSCAR ITEMS (TEXTO GLOBAL)
+   - Función: searchItems
+   - Gateway: GET http://localhost:8080/api/catalog/search/:query
+   - Directo: GET http://localhost:5002/api/catalog/search/:query
+   - Auth: Token
+
+H. VER DETALLE DE UN ITEM (POR ID)
+   - Función: getItemById
+   - Gateway: GET http://localhost:8080/api/catalog/item-detail/:id
+   - Directo: GET http://localhost:5002/api/catalog/item-detail/:id
+   - Auth: Token
+
+I. ACTUALIZAR ITEM
+   - Función: updateItem
+   - Gateway: PUT http://localhost:8080/api/catalog/items/:id
+   - Directo: PUT http://localhost:5002/api/catalog/items/:id
+   - Auth: Token
+
+J. ELIMINAR ITEM
+   - Función: deleteItem
+   - Gateway: DELETE http://localhost:8080/api/catalog/items/:id
+   - Directo: DELETE http://localhost:5002/api/catalog/items/:id
+   - Auth: Token
+
+K. FILTRADO AVANZADO (LA JOYA DE LA CORONA)
+   - Función: filterItems
+   - Gateway: POST http://localhost:8080/api/catalog/filter/:id
+   - Directo: POST http://localhost:5002/api/catalog/filter/:id
+   - Auth: Token
+   - Body: { "Talla": 10.5, "Condición": "Nuevo" }
+
+==============================================================================
+3. ANALYTICS SERVICE (Puerto Interno: 5003)
+Prefix Gateway: /api/analytics
+==============================================================================
+
+A. DASHBOARD COMPLETO
+   - Función: getDashboardStats
+   - Gateway: GET http://localhost:8080/api/analytics/dashboard
+   - Directo: GET http://localhost:5003/dashboard
+   - Auth: Token
+
+==============================================================================
+4. UPLOAD SERVICE (Puerto Interno: 5004)
+Prefix Gateway: /api/upload
+==============================================================================
+
+A. SUBIR IMAGEN
+   - Función: uploadMiddleware (Multer + Cloudinary)
+   - Gateway: POST http://localhost:8080/api/upload/image
+   - Directo: POST http://localhost:5004/image
+   - Auth: No (Público para facilitar App Móvil)
+   - Body: Multipart Form Data (Key: "image", Value: [Archivo])
+
+==============================================================================
+5. UTILIDADES (SEED)
+Ubicación: Catalog Service
+==============================================================================
+
+A. REINICIAR Y POBLAR BASE DE DATOS
+   - Función: seedDatabase
+   - Directo: GET http://localhost:5002/seed
