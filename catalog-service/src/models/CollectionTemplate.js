@@ -7,8 +7,10 @@ const CollectionTemplateSchema = new mongoose.Schema({
     // Estructura dinámica del formulario (Molde)
     fields: [
         {
-            fieldName: String,  // Ej: "Talla"
-            fieldType: String,  // Ej: "number", "text", "selector"
+            /*fieldName: String,  // Ej: "Talla"
+            fieldType: String,  // Ej: "number", "text", "selector"*/
+            name: String,       // <-- CORREGIDO (antes era fieldName)
+            type: { type: String },       // <-- CORREGIDO (antes era fieldType)
             options: [String],  // Opciones si es un selector
             required: Boolean
         }

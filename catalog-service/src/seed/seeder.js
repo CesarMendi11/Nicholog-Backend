@@ -37,8 +37,10 @@ const seedDatabase = async (req, res) => {
             description: "Mi colección personal de Air Jordan y Yeezy",
             userId: user1._id,
             fields: [
-                { fieldName: "Marca", fieldType: "text_short" },
-                { fieldName: "Talla", fieldType: "number" },
+                /*{ fieldName: "Marca", fieldType: "text_short" },
+                { fieldName: "Talla", fieldType: "number" },*/
+                { name: "Marca", type: "text-short" },
+                { name: "Talla", type: "number" },
                 { fieldName: "Condición", fieldType: "selector", options: ["DS (Nuevo)", "Usado"] }
             ]
         });
