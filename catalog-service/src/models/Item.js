@@ -17,7 +17,9 @@ const ItemSchema = new mongoose.Schema({
     acquisition: {
         price: Number,           // Costo original
         date: Date,              // Fecha compra
-        estimatedValue: Number   // Valor mercado actual
+        //estimatedValue: Number   // Valor mercado actual
+        estimatedValue: Number,  // Valor mercado actual
+        currency: String         // <-- AÑADIDO: (Ej: 'USD', 'EUR', 'PEN')
     },
     
     // Galería de imágenes (URLs de Cloudinary)

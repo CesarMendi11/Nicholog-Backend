@@ -37,11 +37,10 @@ const seedDatabase = async (req, res) => {
             description: "Mi colección personal de Air Jordan y Yeezy",
             userId: user1._id,
             fields: [
-                /*{ fieldName: "Marca", fieldType: "text_short" },
-                { fieldName: "Talla", fieldType: "number" },*/
-                { name: "Marca", type: "text-short" },
-                { name: "Talla", type: "number" },
-                { fieldName: "Condición", fieldType: "selector", options: ["DS (Nuevo)", "Usado"] }
+                // CORREGIDO: name, type, isAnalyzable
+                { name: "Marca", type: "text-short", isAnalyzable: true },
+                { name: "Talla", type: "number", isAnalyzable: true },
+                { name: "Condición", type: "selector", options: ["DS (Nuevo)", "Usado"], isAnalyzable: true }
             ]
         });
 
@@ -50,8 +49,8 @@ const seedDatabase = async (req, res) => {
             description: "Relojes automáticos y de cuarzo",
             userId: user1._id,
             fields: [
-                { fieldName: "Marca", fieldType: "text_short" },
-                { fieldName: "Movimiento", fieldType: "selector", options: ["Automático", "Cuarzo"] }
+                { name: "Marca", type: "text-short", isAnalyzable: true },
+                { name: "Movimiento", type: "selector", options: ["Automático", "Cuarzo"], isAnalyzable: true }
             ]
         });
 
@@ -61,9 +60,9 @@ const seedDatabase = async (req, res) => {
             description: "Joyas de la era 8 y 16 bits",
             userId: user2._id,
             fields: [
-                { fieldName: "Consola", fieldType: "selector", options: ["NES", "SNES", "N64", "Switch"] },
-                { fieldName: "Completo", fieldType: "selector", options: ["CIB", "Cartucho"] },
-                { fieldName: "Región", fieldType: "text_short" }
+                { name: "Consola", type: "selector", options: ["NES", "SNES", "N64", "Switch"], isAnalyzable: true },
+                { name: "Completo", type: "selector", options: ["CIB", "Cartucho"], isAnalyzable: true },
+                { name: "Región", type: "text-short", isAnalyzable: false }
             ]
         });
 
@@ -83,7 +82,8 @@ const seedDatabase = async (req, res) => {
                 acquisition: {
                     price: 45, 
                     date: new Date('2018-06-20'),
-                    estimatedValue: 120 
+                    estimatedValue: 120,
+                    currency: "USD" // <-- AÑADIDO
                 },
                 images: ["https://res.cloudinary.com/ds5f0xcdo/image/upload/v170000/nicholog_collections/item-12345.jpg"]
             },
@@ -92,21 +92,21 @@ const seedDatabase = async (req, res) => {
                 templateId: gamesTemplate._id,
                 name: "Super Mario 64",
                 dynamicData: { "Consola": "N64", "Completo": "Solo Cartucho", "Región": "NTSC-U" },
-                acquisition: { price: 30, estimatedValue: 45 },
+                acquisition: { price: 30, estimatedValue: 45, currency: "USD" },
                 images: []
             },
             {
                 templateId: sneakersTemplate._id,
                 name: "Air Jordan 1 High 'Chicago'",
                 dynamicData: { "Marca": "Nike", "Talla": 10.5, "Condición": "DS (Nuevo)" },
-                acquisition: { price: 180, estimatedValue: 450 },
+                acquisition: { price: 180, estimatedValue: 450, currency: "USD" },
                 images: []
             },
             {
                 templateId: watchesTemplate._id,
                 name: "Seiko 5 Sports",
                 dynamicData: { "Marca": "Seiko", "Movimiento": "Automático" },
-                acquisition: { price: 250, estimatedValue: 200 },
+                acquisition: { price: 250, estimatedValue: 200, currency: "USD" },
                 images: []
             }
         ]);

@@ -12,7 +12,8 @@ const CollectionTemplateSchema = new mongoose.Schema({
             name: String,       // <-- CORREGIDO (antes era fieldName)
             type: { type: String },       // <-- CORREGIDO (antes era fieldType)
             options: [String],  // Opciones si es un selector
-            required: Boolean
+            required: Boolean,
+            isAnalyzable: Boolean // <-- AÑADIDO: Para saber si se debe incluir en gráficos            
         }
     ],
 
