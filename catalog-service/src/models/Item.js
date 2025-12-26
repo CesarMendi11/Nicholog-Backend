@@ -7,7 +7,6 @@ const ItemSchema = new mongoose.Schema({
     name: { type: String, required: true },
     
     // DATOS DINÁMICOS: Almacena los campos variables (Talla, Año, etc.)
-    // Se usa Map para permitir cualquier clave-valor definida en el molde.
     dynamicData: {
         type: Map,
         of: mongoose.Schema.Types.Mixed
@@ -17,9 +16,8 @@ const ItemSchema = new mongoose.Schema({
     acquisition: {
         price: Number,           // Costo original
         date: Date,              // Fecha compra
-        //estimatedValue: Number   // Valor mercado actual
         estimatedValue: Number,  // Valor mercado actual
-        currency: String         // <-- AÑADIDO: (Ej: 'USD', 'EUR', 'PEN')
+        currency: String         // Moneda (USD, EUR, etc.)
     },
     
     // Galería de imágenes (URLs de Cloudinary)

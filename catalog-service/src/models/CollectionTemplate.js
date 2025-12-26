@@ -7,13 +7,14 @@ const CollectionTemplateSchema = new mongoose.Schema({
     // Estructura dinámica del formulario (Molde)
     fields: [
         {
-            /*fieldName: String,  // Ej: "Talla"
-            fieldType: String,  // Ej: "number", "text", "selector"*/
-            name: String,       // <-- CORREGIDO (antes era fieldName)
-            type: { type: String },       // <-- CORREGIDO (antes era fieldType)
-            options: [String],  // Opciones si es un selector
+            name: String,
+            // Envolvemos la definición en un objeto para usar 'type' como nombre de propiedad
+            type: { type: String }, 
+            options: [String],
+            optionColors: { type: Map, of: String }, // Mapa de colores para badges
             required: Boolean,
-            isAnalyzable: Boolean // <-- AÑADIDO: Para saber si se debe incluir en gráficos            
+            isAnalyzable: Boolean, // Para Analytics
+            width: String          // Para Smart Layout ('full' | 'half')
         }
     ],
 

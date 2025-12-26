@@ -6,7 +6,7 @@ const Log = require('../models/Log');
 
 const seedDatabase = async (req, res) => {
     try {
-        // 1. Limpieza total de la Base de Datos
+        // 1. Limpieza total
         await User.deleteMany({});
         await CollectionTemplate.deleteMany({});
         await Item.deleteMany({});
@@ -14,128 +14,125 @@ const seedDatabase = async (req, res) => {
 
         console.log("🧹 Base de datos limpiada.");
 
-        // 2. Crear Usuarios
-        // Nota: Se envía contraseña plana; el modelo User la encripta automáticamente.
-        const user1 = await User.create({
+        // 2. Crear Usuario
+        const user = await User.create({
             username: "JuanColeccionista",
             email: "juan@nicholog.com",
             password: "123456" 
         });
 
-        const user2 = await User.create({
-            username: "MariaGamer",
-            email: "maria@nicholog.com",
-            password: "123456"
-        });
-
-        console.log("✅ Usuarios creados.");
+        console.log("✅ Usuario creado: juan@nicholog.com");
 
         // 3. Crear Colecciones (Moldes)
-        // --- Juan ---
-        const sneakersTemplate = await CollectionTemplate.create({
+        
+        // --- Colección 1: Zapatillas (Inversión Alta) ---
+        const sneakers = await CollectionTemplate.create({
             name: "Zapatillas",
-            description: "Mi colección personal de Air Jordan y Yeezy",
-            userId: user1._id,
+            userId: user._id,
             fields: [
-                // CORREGIDO: name, type, isAnalyzable
-                { name: "Marca", type: "text-short", isAnalyzable: true },
-                { name: "Talla", type: "number", isAnalyzable: true },
-                { name: "Condición", type: "selector", options: ["DS (Nuevo)", "Usado"], isAnalyzable: true }
+                { name: "Modelo", type: "text-short", width: "half", isAnalyzable: true },
+                { name: "Talla", type: "number", width: "half", isAnalyzable: true },
+                { 
+                    name: "Estado", 
+                    type: "selector", 
+                    width: "full",
+                    options: ["Nuevo (DS)", "Usado (VNDS)", "Muy Usado"],
+                    optionColors: { "Nuevo (DS)": "success", "Usado (VNDS)": "warning", "Muy Usado": "warn" },
+                    isAnalyzable: true
+                }
             ]
         });
 
-        const watchesTemplate = await CollectionTemplate.create({
-            name: "Relojes",
-            description: "Relojes automáticos y de cuarzo",
-            userId: user1._id,
+        // --- Colección 2: Tecnología Retro (Nostalgia) ---
+        const tech = await CollectionTemplate.create({
+            name: "Tecnología Retro",
+            userId: user._id,
             fields: [
-                { name: "Marca", type: "text-short", isAnalyzable: true },
-                { name: "Movimiento", type: "selector", options: ["Automático", "Cuarzo"], isAnalyzable: true }
+                { name: "Tipo", type: "selector", options: ["Consola", "Portátil", "Accesorio"], width: "half", isAnalyzable: true },
+                { name: "Año", type: "number", width: "half", isAnalyzable: true },
+                { name: "Funciona", type: "checkbox", width: "full" }
             ]
         });
 
-        // --- Maria ---
-        const gamesTemplate = await CollectionTemplate.create({
-            name: "Videojuegos Retro",
-            description: "Joyas de la era 8 y 16 bits",
-            userId: user2._id,
+        // --- Colección 3: Comics (Volumen) ---
+        const comics = await CollectionTemplate.create({
+            name: "Comics",
+            userId: user._id,
             fields: [
-                { name: "Consola", type: "selector", options: ["NES", "SNES", "N64", "Switch"], isAnalyzable: true },
-                { name: "Completo", type: "selector", options: ["CIB", "Cartucho"], isAnalyzable: true },
-                { name: "Región", type: "text-short", isAnalyzable: false }
+                { name: "Editorial", type: "selector", options: ["Marvel", "DC", "Image"], width: "half", isAnalyzable: true },
+                { name: "Grado CGC", type: "number", width: "half", isAnalyzable: true }
             ]
         });
 
         console.log("✅ Colecciones creadas.");
 
-        // 4. Crear Items (Inventario)
-        const items = await Item.insertMany([
-            // --- ITEM 1: The Legend of Zelda (Maria) ---
-            {
-                templateId: gamesTemplate._id,
-                name: "The Legend of Zelda",
-                dynamicData: {
-                    "Consola": "NES",
-                    "Completo": "Cartucho",
-                    "Región": "NTSC-U"
-                },
-                acquisition: {
-                    price: 45, 
-                    date: new Date('2018-06-20'),
-                    estimatedValue: 120,
-                    currency: "USD" // <-- AÑADIDO
-                },
-                images: ["https://res.cloudinary.com/ds5f0xcdo/image/upload/v170000/nicholog_collections/item-12345.jpg"]
-            },
-            // --- Otros Items ---
-            {
-                templateId: gamesTemplate._id,
-                name: "Super Mario 64",
-                dynamicData: { "Consola": "N64", "Completo": "Solo Cartucho", "Región": "NTSC-U" },
-                acquisition: { price: 30, estimatedValue: 45, currency: "USD" },
-                images: []
-            },
-            {
-                templateId: sneakersTemplate._id,
-                name: "Air Jordan 1 High 'Chicago'",
-                dynamicData: { "Marca": "Nike", "Talla": 10.5, "Condición": "DS (Nuevo)" },
-                acquisition: { price: 180, estimatedValue: 450, currency: "USD" },
-                images: []
-            },
-            {
-                templateId: watchesTemplate._id,
-                name: "Seiko 5 Sports",
-                dynamicData: { "Marca": "Seiko", "Movimiento": "Automático" },
-                acquisition: { price: 250, estimatedValue: 200, currency: "USD" },
-                images: []
-            }
-        ]);
+        // 4. Crear Items (Inventario con Datos Financieros)
 
-        console.log("✅ Items creados.");
+        // --- Zapatillas (Ganancia de valor) ---
+        await Item.create({
+            templateId: sneakers._id,
+            name: "Air Jordan 1 High 'Chicago'",
+            dynamicData: { "Modelo": "Lost & Found", "Talla": 10.5, "Estado": "Nuevo (DS)" },
+            acquisition: { price: 180, estimatedValue: 450, currency: "USD", date: new Date("2022-11-19") },
+            images: ["https://images.stockx.com/images/Air-Jordan-1-Retro-High-Chicago-Reimagined-Product.jpg"]
+        });
 
-        // 5. Generar Logs Históricos (Inserción directa)
-        await Log.create([
-            {
-                action: "CREATE_ITEM",
-                description: "Se agregó el item 'The Legend of Zelda' a la colección",
-                actor: { userId: user2._id, email: user2.email, username: user2.username },
-                target: { entityType: "Item", entityId: items[0]._id, name: items[0].name },
-                changes: { old: null, new: items[0] },
-                timestamp: new Date()
-            }
-        ]);
+        await Item.create({
+            templateId: sneakers._id,
+            name: "Nike Dunk Low 'Panda'",
+            dynamicData: { "Modelo": "Retro White/Black", "Talla": 10, "Estado": "Usado (VNDS)" },
+            acquisition: { price: 110, estimatedValue: 140, currency: "USD", date: new Date("2023-01-15") },
+            images: []
+        });
 
-        res.json({
-            message: "✅ Base de datos reiniciada y poblada con éxito (SEED)",
-            info: "Logins disponibles (Pass: 123456):",
-            users: [
-                { user: "Juan", email: "juan@nicholog.com" },
-                { user: "Maria", email: "maria@nicholog.com" }
-            ],
-            stats: {
-                collections: 3,
-                items: items.length
-            }
+        await Item.create({
+            templateId: sneakers._id,
+            name: "Adidas Yeezy 350 V2 'Zebra'",
+            dynamicData: { "Modelo": "CP9654", "Talla": 11, "Estado": "Muy Usado" },
+            acquisition: { price: 220, estimatedValue: 180, currency: "USD", date: new Date("2017-02-25") }, // Pérdida de valor
+            images: []
+        });
+
+        // --- Tecnología (Valor estable) ---
+        await Item.create({
+            templateId: tech._id,
+            name: "Nintendo Game Boy (DMG-01)",
+            dynamicData: { "Tipo": "Portátil", "Año": 1989, "Funciona": true },
+            acquisition: { price: 50, estimatedValue: 120, currency: "USD", date: new Date("2019-08-10") },
+            images: []
+        });
+
+        await Item.create({
+            templateId: tech._id,
+            name: "Sony Walkman TPS-L2",
+            dynamicData: { "Tipo": "Accesorio", "Año": 1979, "Funciona": false },
+            acquisition: { price: 200, estimatedValue: 500, currency: "USD", date: new Date("2020-01-15") },
+            images: []
+        });
+
+        // --- Comics (Volumen bajo costo) ---
+        await Item.create({
+            templateId: comics._id,
+            name: "Amazing Spider-Man #300",
+            dynamicData: { "Editorial": "Marvel", "Grado CGC": 9.0 },
+            acquisition: { price: 300, estimatedValue: 800, currency: "USD", date: new Date("2018-11-20") },
+            images: []
+        });
+
+        await Item.create({
+            templateId: comics._id,
+            name: "Batman: The Killing Joke",
+            dynamicData: { "Editorial": "DC", "Grado CGC": 9.8 },
+            acquisition: { price: 50, estimatedValue: 100, currency: "USD", date: new Date("2021-03-05") },
+            images: []
+        });
+
+        console.log("✅ Items insertados.");
+        
+        res.json({ 
+            message: "Base de datos poblada con éxito", 
+            user: "juan@nicholog.com",
+            stats: { collections: 3, items: 7 }
         });
 
     } catch (error) {
